@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import fetchStats  from '../services/stats-api'
 
 class StatsContainer extends Component {
     constructor(props) {
@@ -15,6 +16,10 @@ class StatsContainer extends Component {
     }
 
     componentDidMount() {
+        fetchStats().then(function(response) {
+            console.log(response.data);
+        });  
+
 
     }
 
