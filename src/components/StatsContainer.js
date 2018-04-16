@@ -1,76 +1,65 @@
 import React, { Component } from 'react'
-import fetchStats  from '../services/stats-api'
+import { Statistic, Label } from 'semantic-ui-react'
+import {fetchStats, fetchWL} from '../services/stats-api'
+
 
 class StatsContainer extends Component {
     constructor(props) {
         super(props);
-
+        
         this.state = {
-            imgurl  : '',
-            name    : '',
-            wins    : 0,
-            losses  : 0,
-            winrate : 0,
-            mmr     : 0
+            playerStats : [],
+            avatar: '',
+            personaname: '',
+            name: '',
+            wins: 0,
+            losses: 0,
+            winrate: 0,
+            mmr: 0
         }
+        
     }
-
+    
     componentDidMount() {
-        fetchStats().then(function(response) {
-            console.log(response.data);
-        });
+
+        fetchStats(this.props.match.params.id).then( res => {
+            this.setState(...this.state, {avatar: res.data.profile.avatarfull,personaname:res.data.profile.personaname, mmr: res.data.mmr_estimate.estimate});  
+        })
+    
+        fetchWL(this.props.match.params.id).then( res => {
+            let rate = (100 * res.data.win ) / (res.data.win + res.data.lose);
+            this.setState(...this.state, { wins: res.data.win, losses: res.data.lose, winrate: rate.toFixed(2)});                        
+        })
     }
 
     render() { 
+
         return( 
+        <div>
+            <Label as='a' image size="massive">
+                <img src={this.state.avatar} />
+                {this.state.personaname}
 
-        <div className="box">
-          
-            <div className="box__header">
-                <h3 className="box__header-title">Noryas</h3>
-                <img className="box__header-img" src="https://steamcdn-a.akamaihd.net/steamcommunity/public/images/avatars/b6/b6fb4ea763781ef30a48cf025dcf926eeec0de38_medium.jpg"></img>
-            </div>
-
-            <div className="box__body">
-                
-                <div className="stats stats--main">
-                    <div className="stats__amount">12698</div>
-                    <div className="stats__caption">WINS</div>
-                    <div className="stats__change">
-                    <div className="stats__value stats__value--positive">+6%</div>
-                    <div className="stats__period">this week</div>
-                    </div>
-                </div>
-        
-                <div className="stats">
-                    <div className="stats__amount">87359</div>
-                    <div className="stats__caption">LOSSES</div>
-                    <div className="stats__change">
-                    <div className="stats__value stats__value--negative">-12%</div>
-                    <div className="stats__period">this week</div>
-                    </div>
-                </div>
-        
-                <div className="stats">
-                    <div className="stats__amount">6302</div>
-                    <div className="stats__caption">LOSSES</div>
-                    <div className="stats__change">
-                    <div className="stats__value">+78</div>
-                    <div className="stats__period">this week</div>
-                    </div>
-                </div>
-        
-                <div className="stats">
-                    <div className="stats__amount">268</div>
-                    <div className="stats__caption">posts</div>
-                    <div className="stats__change">
-                    <div className="stats__value">+3</div>
-                    <div className="stats__period">this week</div>
-                    </div>
-                </div>
-            </div>
-      </div>
-        
+               
+            </Label>
+            <br/>
+            <Statistic size="mini">
+                <Statistic.Label style={{color: 'rgba(144, 144, 144, 0.87)'}}>WINS</Statistic.Label>
+                <Statistic.Value style={{color:'rgb(102, 187, 106)'}}>{this.state.wins}</Statistic.Value>
+            </Statistic>
+            <Statistic size="mini">
+                <Statistic.Label style={{color: 'rgba(144, 144, 144, 0.87)'}}>LOSSES</Statistic.Label>
+                <Statistic.Value style={{color:'red'}}>{this.state.losses}</Statistic.Value>
+            </Statistic>
+            <Statistic size="mini">
+                <Statistic.Label style={{color: 'rgba(144, 144, 144, 0.87)'}}>WIN RATE</Statistic.Label>
+                <Statistic.Value style={{color:'white'}}>{this.state.winrate}</Statistic.Value>
+            </Statistic>
+            <Statistic size="mini">
+                <Statistic.Label style={{color: 'rgba(144, 144, 144, 0.87)'}}>MMR</Statistic.Label>
+                <Statistic.Value style={{color:'white'}}>{this.state.mmr}</Statistic.Value>
+            </Statistic>
+        </div>
     )}
 }
 

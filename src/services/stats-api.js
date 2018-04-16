@@ -1,6 +1,9 @@
 import { http } from './http'
 
-const fetchStats = user => http.get('players/86857087')
+export const fetchStats = id => http.get(`players/${id}`)
+    
+export const fetchWL = id => http.get(`players/${id}/wl?`)
 
-export default fetchStats
+const searchPlayer = name => http.get(`search?q=${name}`)
 
+export default searchPlayer
