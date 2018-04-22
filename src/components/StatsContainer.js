@@ -36,11 +36,9 @@ class StatsContainer extends Component {
 
         return( 
         <div>
-            <Label as='a' image size="massive">
+            <Label as='a' image size="massive" style={{ marginBottom: 20 }}>
                 <img src={this.state.avatar} />
-                {this.state.personaname}
-
-               
+                {this.state.personaname}              
             </Label>
             <br/>
             <Statistic size="mini">
